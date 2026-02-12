@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tendance des ventes</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    <style>
+
+        .darkmode--activated .history-table {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated td {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .back-btn a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .history-table {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .history-table:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1.25rem 1rem;
+            background-color: var(--primary-color);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid #eee;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            color: var(--white);
+            cursor: pointer;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/compteProducteur}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteProducteur}">Portail</a></li>
+        <li><a th:href="@{/infoProducteur}">Informations</a></li>
+        <li><a th:href="@{/produitsProducteur}">Produits</a></li>
+        <li><a th:href="@{/tendanceVente}">Tendance</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Historique des ventes et des paiements</h1>
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/compteProducteur}">
+                    <i class="ri-arrow-left-line"></i> Retour en arrière
+                </a>
+            </button>
+        </div>
+    </div>
+
+    <div class="history-table">
+        <table>
+            <thead>
+            <tr>
+                <th>Produit ID</th>
+                <th>Nom Produit</th>
+                <th>Quantité Vendue</th>
+                <th>Date Paiement</th>
+                <th>Méthode Paiement</th>
+                <th>Prix Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(listeTransactions)}">
+                <td colspan="6" class="empty-message">Aucune ventes pour le moment</td>
+            </tr>
+            <tr th:each="vente : ${listeTransactions}">
+                <td th:text="${vente.produitId}"></td>
+                <td th:text="${vente.nomGrain}"></td>
+                <td th:text="${vente.quantiteAchetee} + ' kg'"></td>
+                <td th:text="${#dates.format(vente.datePaiement, 'dd/MM/yyyy')}"></td>
+                <td th:text="${vente.methodePaiement}"></td>
+                <td th:text="${vente.prixTotal} + ' $'"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+
+<script>
+
+    ScrollReveal().reveal(".history-table", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

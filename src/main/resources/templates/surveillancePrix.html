@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveillance des prix</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+    <style>
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+        .darkmode--activated h3 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+        .darkmode--activated h2 {
+            color: #ffffff !important;
+        }
+        .darkmode--activated .product-management-container {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated .products-table {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated .dashboard {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated .card {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+
+
+        .darkmode--activated p {
+            color: #ffffff !important;
+        }
+
+
+
+        .darkmode--activated td {
+            color: #ffffff !important;
+        }
+
+
+
+
+
+
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+</head>
+<body>
+<script>
+    function exportToCSV() {
+        const btn = document.getElementById('exportCSV');
+        const text = document.getElementById('csvText');
+        const loading = document.getElementById('csvLoading');
+
+        btn.disabled = true;
+        text.style.display = 'none';
+        loading.style.display = 'inline-block';
+
+        setTimeout(() => {
+            const table = document.querySelector('.products-table');
+            const rows = table.querySelectorAll('tr');
+            let csvContent = "data:text/csv;charset=utf-8,";
+
+
+            const headers = [];
+            table.querySelectorAll('th').forEach(th => headers.push(th.textContent));
+            csvContent += headers.join(",") + "\n";
+
+
+            rows.forEach(row => {
+                const rowData = [];
+                row.querySelectorAll('td').forEach(td => {
+                    let text = td.textContent.replace('$', '').trim();
+                    rowData.push(`"${text}"`);
+                });
+                if (rowData.length > 0) {
+                    csvContent += rowData.join(",") + "\n";
+                }
+            });
+
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "produits_" + new Date().toISOString().slice(0,10) + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            btn.disabled = false;
+            text.style.display = 'inline-block';
+            loading.style.display = 'none';
+        }, 500);
+    }
+
+    function exportToPDF() {
+        const btn = document.getElementById('exportPDF');
+        const text = document.getElementById('pdfText');
+        const loading = document.getElementById('pdfLoading');
+
+        btn.disabled = true;
+        text.style.display = 'none';
+        loading.style.display = 'inline-block';
+
+        setTimeout(() => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text('Rapport des produits - ' + new Date().toLocaleDateString(), 15, 15);
+
+            const table = document.querySelector('.products-table');
+            const headers = [];
+            const rows = [];
+
+            table.querySelectorAll('th').forEach(th => headers.push(th.textContent));
+
+            table.querySelectorAll('tr').forEach(tr => {
+                const row = [];
+                tr.querySelectorAll('td').forEach(td => {
+                    row.push(td.textContent);
+                });
+                if (row.length > 0) rows.push(row);
+            });
+
+            doc.autoTable({
+                head: [headers],
+                body: rows,
+                startY: 25,
+                styles: {
+                    cellPadding: 2,
+                    fontSize: 10,
+                    valign: 'middle'
+                },
+                headStyles: {
+                    fillColor: [0, 128, 0],
+                    textColor: 255
+                }
+            });
+
+            doc.save('produits_' + new Date().toISOString().slice(0,10) + '.pdf');
+
+            btn.disabled = false;
+            text.style.display = 'inline-block';
+            loading.style.display = 'none';
+        }, 500);
+    }
+</script>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/pageAccueil}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteAdmin}">Portail</a></li>
+        <li><a th:href="@{/gestionAcheteurProducteur}">Gestion de comptes</a></li>
+        <li><a th:href="@{/surveillancePrix}">Surveillance</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Prix et stock des produits</h1>
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/compteAdmin}">
+                    <i class="ri-arrow-left-line"></i> Retour à l'arrière
+                </a>
+            </button>
+        </div>
+    </div>
+
+    <div class="product-management-container">
+        <h2 class="section-title">
+            <i class="ri-price-tag-3-line"></i> Gestion des produits
+        </h2>
+        <div class="export-options">
+            <button id="exportCSV" onclick="exportToCSV()">
+                <span id="csvText">Exporter CSV</span>
+                <span id="csvLoading" class="loading-icon" style="display:none;">
+            <i class="ri-loader-4-line spin"></i>
+        </span>
+            </button>
+            <button id="exportPDF" onclick="exportToPDF()">
+                <span id="pdfText">Exporter PDF</span>
+                <span id="pdfLoading" class="loading-icon" style="display:none;">
+            <i class="ri-loader-4-line spin"></i>
+        </span>
+            </button>
+        </div>
+
+        <table class="products-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom du produit</th>
+                <th>Prix (CAD)</th>
+                <th>Quantité</th>
+                <th>Nom du producteur</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="produit : ${produits}">
+                <td th:text="${produit.id}"></td>
+                <td th:text="${produit.nomGrain}"></td>
+                <td th:text="${#numbers.formatDecimal(produit.prixVente, 1, 2) + '$'}"></td>
+                <td th:text="${produit.quantiteDisponible}"></td>
+                <td th:text="${producteurNoms.get(produit.producteurEmail)}"></td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dashboard">
+        <h2 class="section-title">
+            <i class="ri-dashboard-line"></i> Tableau de bord
+        </h2>
+
+        <div class="stat-cards">
+            <div class="card">
+                <h3>Nombres de produits</h3>
+                <p th:text="${stats.totalProduits}"></p>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-section">
+                <h3>Produits par catégorie</h3>
+                <table class="dashboard-table">
+                    <thead>
+                    <tr>
+                        <th>Catégorie</th>
+                        <th>Nombre de produits</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="type : ${stats.produitsParType}">
+                        <td th:text="${type[0]}"></td>
+                        <td th:text="${type[1]}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="dashboard-section">
+                <h3>Prix moyen par catégorie</h3>
+                <table class="dashboard-table">
+                    <thead>
+                    <tr>
+                        <th>Catégorie</th>
+                        <th>Prix moyen</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="price : ${stats.prixMoyenParType}">
+                        <td th:text="${price[0]}"></td>
+                        <td th:text="${#numbers.formatDecimal(price[1], 1, 2) + '$'}">Lebron</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script th:src="@{/js/main.js}"></script>
+
+
+<script>
+
+    ScrollReveal().reveal(".product-management-container", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    ScrollReveal().reveal(".dashboard", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800,
+        delay: 200
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

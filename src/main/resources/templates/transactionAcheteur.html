@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi des commandes</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <style>
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+        .darkmode--activated h2 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .tracking-container {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated td {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .tracking-search {
+            color: #121212 !important;
+        }
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+
+
+
+    <style>
+        .tracking-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .tracking-search {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tracking-search input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .tracking-search button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .tracking-search button:hover {
+            background-color: var(--text-dark);
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .orders-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .orders-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .orders-table tr:nth-child(even) {
+            background-color: #c3c6b0;
+        }
+
+        .orders-table tr:hover {
+            background-color: #c3c6b0;
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .back-btn a {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/compteAcheteur}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteAcheteur}">Portail</a></li>
+        <li><a th:href="@{/produitsAcheteur}">Produits</a></li>
+        <li><a th:href="@{/messageAcheteur}">Messages</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Suivi des commandes et des livraisons</h1>
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/compteAcheteur}">
+                    <i class="ri-arrow-left-line"></i> Retour à l'arrière
+                </a>
+            </button>
+        </div>
+    </div>
+
+    <div class="tracking-container">
+        <h2 class="section-title">
+            <i class="ri-truck-line"></i> Suivi de votre commande
+        </h2>
+        <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}" style="color:red; margin-bottom: 1rem;"></div>
+
+        <form class="tracking-search" method="get" th:action="@{/transactionAcheteur}">
+            <input type="text" name="idTransaction" placeholder="Entrez votre numéro de suivi">
+            <button type="submit">Suivre</button>
+        </form>
+
+
+        <table class="orders-table" th:if="${logistique != null}">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Transaction ID</th>
+                <th>Transporteur</th>
+                <th>Frais du transport ($)</th>
+                <th>Délai (jours)</th>
+                <th>Statut Livraison</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${logistique.id}"></td>
+                <td th:text="${logistique.transactionId}"></td>
+                <td th:text="${logistique.transporteur}"></td>
+                <td th:text="${logistique.fraisTransport}"></td>
+                <td th:text="${logistique.delai}"></td>
+                <td th:text="${logistique.statutLivraison}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    ScrollReveal().reveal(".tracking-container", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+
+</script>
+</body>
+</html>

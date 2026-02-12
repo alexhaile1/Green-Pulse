@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Section informative</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+  <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+  <script>
+    function addDarkmodeWidget() {
+      const options = {
+        label: '🌓',
+        autoMatchOsTheme: true,
+        exclude: ['.logo'],
+        buttonLight: '#5c5300',
+        buttonDark: '#121212',
+        saveInCookies: true,
+        left: 'unset',
+        bottom: 'unset',
+        top: 'unset',
+      };
+
+      const darkmode = new Darkmode(options);
+      const toggle = darkmode.showWidget();
+
+      setTimeout(() => {
+        toggle.style.position = 'relative';
+        toggle.style.left = 'auto';
+        toggle.style.right = 'auto';
+        toggle.style.bottom = 'auto';
+        toggle.style.top = 'auto';
+        toggle.style.zIndex = '9999';
+      }, 100);
+
+      document.getElementById('darkmode-toggle').appendChild(toggle);
+    }
+    window.addEventListener('load', addDarkmodeWidget);
+  </script>
+
+  <style>
+
+    .news-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .news-item {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .news-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .news-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .news-content {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .news-item h4 {
+      margin: 0 0 1rem 0;
+      font-size: 1.2rem;
+      line-height: 1.4;
+    }
+
+    .news-item h4 a {
+      color: #2c3e50;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .news-item h4 a:hover {
+      color: #3a7bd5;
+    }
+
+    .news-item p {
+      color: #7f8c8d;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .news-item small {
+      color: #95a5a6;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dashboard-section h3 {
+      font-size: 1.5rem;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dashboard-section h3 i {
+      color: #3a7bd5;
+    }
+
+    .darkmode--activated h4 {
+      color: #121212 !important;
+    }
+
+    .darkmode--activated h1 {
+      color: #ffffff !important;
+    }
+    .darkmode-toggle{
+      z-index: 1000;
+    }
+    .darkmode--activated li {
+      color: #ffffff !important;
+    }
+  </style>
+</head>
+
+<body>
+<nav>
+  <div class="nav_header">
+    <div class="nav_logo">
+      <a th:href="@{/pageAccueil}" class="logo" style="filter: invert(0%) !important;">greenpulse.export</a>
+    </div>
+    <div class="nav_menu_btn" id="menu-btn">
+      <i class="ri-menu-line"></i>
+    </div>
+  </div>
+  <ul class="nav_lien" id="nav-lien">
+    <li><a th:href="@{/pageAccueil}">Menu</a></li>
+    <li><a th:href="@{/connexion}">Connexion</a></li>
+    <li><a th:href="@{/produits}">Produits</a></li>
+    <li><a th:href="@{/notreHistoire}">À propos</a></li>
+  </ul>
+  <div class="nav_search" id="nav-search">
+    <div id="darkmode-toggle"></div>
+  </div>
+</nav>
+
+<main>
+  <div class="account-header">
+    <h1 class="account-title"> Informations sur le marché des grains internationales </h1>
+  </div>
+
+  <div class="dashboard-section">
+    <h3><i class="ri-newspaper-line"></i> Marché des grains de céréales </h3>
+
+  <div id="marche-grain" class="news-container"></div>
+
+  </div>
+</main>
+
+
+<script>
+  async function getMarcheGrains() {
+    const newsContainer = document.getElementById('marche-grain');
+    newsContainer.innerHTML = '<div class="loading">Chargement des actualités...</div>';
+
+    try {
+      const response = await fetch('/api/marche-grains');
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (Array.isArray(data) && data.length > 0) {
+        newsContainer.innerHTML = '';
+        data.forEach(item => {
+          const newsItem = document.createElement('div');
+          newsItem.className = 'news-item';
+
+          const content = document.createElement('div');
+          content.className = 'news-content';
+
+          const title = document.createElement('h4');
+          title.textContent = `${item.memberStateName} - Produit :  ${item.productName}`;
+          content.appendChild(title);
+
+          const price = document.createElement('p');
+          price.textContent = `Prix: ${item.price} €/tonne`;
+          content.appendChild(price);
+
+          const date = document.createElement('small');
+          date.textContent = `Nom du marché : ${item.marketName}`;
+          content.appendChild(date);
+
+          newsItem.appendChild(content);
+          newsContainer.appendChild(newsItem);
+        });
+      } else {
+        newsContainer.innerHTML = '<p>Aucune actualité disponible pour le moment.</p>';
+      }
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      newsContainer.innerHTML = `
+        <div class="error">
+          <p>Impossible de charger les actualités.</p>
+          <small>${error.message}</small>
+        </div>`;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", getMarcheGrains);
+
+</script>
+<div class="footer-basic" id="contact">
+  <footer>
+    <ul class="list-inline">
+      <li class="list-inline-item"><a th:href="@{/sectionInformative}">Informations du marché</a></li>
+      <li class="list-inline-item"><a th:href="@{/termsConditions}">Termes et conditions</a>
+      <li class="list-inline-item"><a th:href="@{/contacterNous}">Contactez-nous</a></li>
+    </ul>
+    <p class="copyright">Copyright @2025; Collège de Rosemont; Mariyam , Leen , Yanis , Alex</p>
+  </footer>
+</div>
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>

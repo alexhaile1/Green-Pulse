@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panier</title>
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <style>
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+        .darkmode--activated .cart-container {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated .summary-card {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated .product-details {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated .product-price {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated h2 {
+            color: #ffffff !important;
+        }
+
+
+        .darkmode--activated h3 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .product-name {
+            color: #ffffff !important;
+        }
+
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    <style>
+        .cart-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .cart-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            font-size: 14px;
+        }
+
+        .cart-notification.show {
+            transform: translateX(0);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 2rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+
+        .product-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+
+        .product-image img {
+            width: auto;
+            height: 100%;
+            object-fit: contain;
+            max-width: 100%;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .quantity-input {
+            width: 80px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .update-btn {
+            padding: 0.5rem 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .update-btn:hover {
+            background-color: #3e8e41;
+        }
+
+        .remove-btn {
+            padding: 0.5rem 1rem;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .remove-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .clear-cart-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+            transition: background-color 0.3s;
+        }
+
+        .clear-cart-btn:hover {
+            background-color: #cc0000;
+        }
+
+        .cart-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .summary-card {
+            background-color: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 10px;
+            height: fit-content;
+        }
+
+        .summary-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total-row {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .back-btn a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .empty-cart-message {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .empty-cart-message p {
+            margin-bottom: 1rem;
+        }
+
+        .back-to-products {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-to-products:hover {
+            background-color: var(--text-dark);
+        }
+
+        .checkout-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .checkout-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .cart-notification i {
+            font-size: 18px;
+        }
+
+    </style>
+</head>
+
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/compteAcheteur}" class="logo" style="filter: invert(0%) !important;">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteAcheteur}">Portail</a></li>
+        <li><a th:href="@{/produitsAcheteur}">Produits</a></li>
+        <li><a th:href="@{/messageAcheteur}">Messages</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<main>
+    <div class="account-header">
+        <h1 class="account-title" style="filter: invert(0%) !important;">Panier</h1>
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/produitsAcheteur}">
+                    <i class="ri-arrow-left-line"></i> Retour à l'arrière
+                </a>
+            </button>
+        </div>
+    </div>
+
+    <div class="cart-container">
+        <div class="cart-items">
+            <h2 class="section-title" style="filter: invert(0%) !important;">
+                <i class="ri-shopping-cart-line"></i> Vos produits
+            </h2>
+
+            <div th:if="${panier == null or panier.listePanier.isEmpty()}" class="empty-cart-message">
+                <p>Votre panier est vide</p>
+                <a th:href="@{/produitsAcheteur}" class="back-to-products">
+                    <i class="ri-arrow-left-line"></i> Retournez à la liste
+                </a>
+            </div>
+
+            <div th:unless="${panier == null or panier.listePanier.isEmpty()}">
+                <div class="cart-actions">
+                    <form th:action="@{/panier/vider}" method="post">
+                        <button type="submit" class="clear-cart-btn">
+                            <i class="ri-delete-bin-line"></i> Vider le panier
+                        </button>
+                    </form>
+                </div>
+
+                <div th:each="produit : ${panier.listePanier}" class="cart-item">
+                    <div class="product-image">
+                        <img th:src="@{${'/' + produit.nomGrain + 'trp.png'}}" th:alt="${produit.nomGrain}">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-name" id="produit" th:text="${produit.nomGrain}"></h3>
+                        <div class="product-price" id="prixTotal" th:text="${'$' + produit.prixVente + '/kg'}"></div>
+
+                        <form th:action="@{/panier/modifier-quantite/{id}(id=${produit.id})}" method="post" class="quantity-controls">
+                            <label>Entrez la  <strong> Quantité </strong> (kg):</label>
+                            <input type="number"
+                                   id="quantite"
+                                   name="quantite"
+                                   class="quantity-input"
+                                   th:value="${panier.getQuantitePourProduit(produit)}"
+                                   min="1"
+                                   step="1"
+                                   required>
+                            <button type="submit" class="update-btn ">Mettre à jour</button>
+                        </form>
+
+                        <form th:action="@{/panier/retirer/{id}(id=${produit.id})}" method="post" class="product-actions">
+                            <button type="submit" class="remove-btn">
+                                <i class="ri-delete-bin-line"></i> Retirer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <h3 class="summary-title">Récapitulatif de la commande</h3>
+
+            <div class="summary-row">
+                <span>Sous-total:</span>
+                <span th:text="${panier != null ? '$' + #numbers.formatDecimal(panier.prixTotal, 1, 2, 'COMMA') : '$0.00'}"></span>
+            </div>
+
+            <div class="summary-row">
+                <span>Livraison:</span>
+                <span>$0.00</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Taxes (15%):</span>
+                <span th:text="${panier != null ? '$' + #numbers.formatDecimal(panier.prixTotal * 0.15, 1, 2, 'COMMA') : '$0.00'}"></span>
+            </div>
+
+            <div class="summary-row total-row">
+                <span>Total:</span>
+                <span th:text="${panier != null ? '$' + #numbers.formatDecimal(panier.prixTotal * 1.15, 1, 2, 'COMMA') : '$0.00'}"></span>
+            </div>
+
+            <div th:unless="${panier == null or panier.listePanier.isEmpty()}" class="checkout-container">
+                <a th:href="@{/paiement}" class="checkout-btn">
+                    <i class="ri-wallet-3-line"></i> Passer au paiement
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    ScrollReveal().reveal(".cart-container", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    function showPanierNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'cart-notification';
+        notification.innerHTML = `
+        <i class="ri-checkbox-circle-fill"></i>
+        ${message}
+    `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.classList.add('show'), 10);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 400);
+        }, 3000);
+    }
+
+    document.querySelectorAll('.update-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (this.closest('form')) {
+                e.preventDefault();
+                showPanierNotification("Panier mis à jour avec succès");
+                setTimeout(() => {
+                    this.closest('form').submit();
+                }, 1000);
+            }
+        });
+    });
+
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (this.closest('form')) {
+                e.preventDefault();
+                const productName = this.closest('.product-item').querySelector('.product-name').textContent;
+                showPanierNotification(`${productName} ajouté au panier`);
+                setTimeout(() => {
+                    this.closest('form').submit();
+                }, 1000);
+            }
+        });
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

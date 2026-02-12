@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termes et Conditions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <style>
+        .darkmode--activated .logo {
+            color: #064bf8 !important;
+        }
+
+        .darkmode--activated h2 {
+            color: #064bf8 !important;
+        }
+
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+
+        .darkmode--activated h1 {
+            color: #064bf8 !important;
+        }
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['.logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+                onChange: function(isDark) {
+                    if (isDark) {
+                        document.body.classList.add('dark-mode-active');
+                    } else {
+                        document.body.classList.remove('dark-mode-active');
+                    }
+                }
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            if (darkmode.isActivated()) {
+                document.body.classList.add('dark-mode-active');
+            }
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+</head>
+
+<body>
+
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/pageAccueil}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/pageAccueil}">Menu</a></li>
+        <li><a th:href="@{/connexion}">Connexion</a></li>
+        <li><a th:href="@{/produits}">Produits</a></li>
+        <li><a th:href="@{/notreHistoire}">À propos</a></li>
+    </ul>
+
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<main class="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="mb-4">Termes et Conditions d'Utilisation</h1>
+                <p class="text-muted" style="text-align: right;">Dernière mise à jour : 19 mai 2025</p>
+
+                <h2>1. Acceptation des Conditions</h2>
+                <p>En accédant et en utilisant ce site web, vous acceptez d'être lié par ces termes et conditions. Si
+                    vous n'acceptez pas ces termes, veuillez ne pas utiliser ce site.</p>
+
+                <h2>2. Utilisation du Site</h2>
+                <p>Vous vous engagez à utiliser ce site uniquement à des fins légales et conformément à ces termes. Vous
+                    ne devez pas :</p>
+                <ul>
+                    <li>Violer les lois locales ou internationales</li>
+                    <li>Exploiter le site à des fins commerciales non autorisées</li>
+                    <li>Tenter de compromettre la sécurité du site</li>
+                </ul>
+
+                <h2>3. Propriété Intellectuelle</h2>
+                <p>Tous les contenus, logos et marques présents sur ce site sont la propriété de greenpulse.export ou de
+                    ses concédants de licence. Toute reproduction non autorisée est interdite.</p>
+
+                <h2>4. Limitation de Responsabilité</h2>
+                <p>greenpulse.export ne sera pas responsable des dommages directs, indirects ou consécutifs résultant de
+                    l'utilisation de ce site.</p>
+
+                <h2>5. Modifications</h2>
+                <p>Nous nous réservons le droit de modifier ces termes à tout moment. Les modifications prendront effet
+                    immédiatement après leur publication sur le site.</p>
+
+                <h2>6. Contact</h2>
+                <p>Pour toute question concernant ces termes, veuillez nous contacter à : <a href="mailto:">contactService@greenpulse.export</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

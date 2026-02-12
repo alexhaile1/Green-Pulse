@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages Reçus</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <style>
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+         .darkmode--activated td {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+
+         .darkmode--activated .logo {
+             color: #ffffff !important;
+         }
+
+        .darkmode--activated .notifications-container {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated .product-name {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h2 {
+            color: #ffffff !important;
+        }
+
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    <style>
+        /* Style inchangé (tu avais déjà tout en place, donc on ne touche pas) */
+        .notifications-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notifications-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .notifications-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .notifications-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .notifications-table tr:nth-child(even) {
+            background-color: #dac4c4;
+        }
+
+        .notifications-table tr:hover {
+            background-color: #dac4c4;
+            cursor: pointer;
+        }
+
+        .message-preview {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 400px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .message-content {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            min-height: 200px;
+            white-space: pre-wrap;
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .back-btn a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .bottomRight{
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .darkmode--activated p {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .notifications-table tr:nth-child(even) {
+            background-color: green;
+        }
+        .darkmode--activated .notifications-table tr:hover {
+            background-color: green;
+            cursor: pointer;
+        }
+
+        .darkmode--activated td {
+            color: #ffffff !important;
+        }
+
+    </style>
+</head>
+
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/compteProducteur}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteProducteur}">Portail</a></li>
+        <li><a th:href="@{/infoProducteur}">Informations</a></li>
+        <li><a th:href="@{/produitsProducteur}">Produits</a></li>
+        <li><a th:href="@{/tendanceVente}">Tendance</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Messages Reçus</h1>
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/compteProducteur}">
+                    <i class="ri-arrow-left-line"></i> Retour à l'arrière
+                </a>
+            </button>
+        </div>
+    </div>
+
+    <div class="notifications-container">
+        <h2 class="section-title">
+            <i class="ri-notification-line"></i> Tableau des messages
+        </h2>
+
+        <div th:if="${error}" style="color: blue; font-weight: bold;">
+            <p th:text="${error}"></p>
+        </div>
+        <div th:if="${info}" style="color: orange; font-weight: bold;">
+            <p th:text="${info}"></p>
+        </div>
+
+        <table class="notifications-table">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Expéditeur (Email)</th>
+                <th>Message</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${messages == null or #lists.isEmpty(messages)}">
+                <td colspan="3" style="text-align: center; color: orange;">Aucun message trouvé pour cet ID.</td>
+            </tr>
+            <tr th:each="msg : ${messages}"
+                th:attr="data-sender=${msg.emailEnvoyeur},
+                 data-date=${#dates.format(msg.dateEnvoi, 'dd/MM/yyyy HH:mm')},
+                 data-message=${msg.contenuMessage}"
+                onclick="handleRowClick(this)">
+                <td th:text="${#dates.format(msg.dateEnvoi, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${msg.emailEnvoyeur}"></td>
+                <td class="message-preview" th:text="${msg.contenuMessage}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3>Détails du message</h3>
+            <div class="message-header">
+                <p><strong>De:</strong> <span id="sender-name"></span></p>
+                <p><strong>Date:</strong> <span id="message-date"></span></p>
+            </div>
+            <div class="message-content" id="full-message-content"></div>
+        </div>
+    </div>
+
+    <div class="bottomRight">
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/contacterAcheteur}"> Contacter un acheteur </a>
+            </button>
+        </div>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    function handleRowClick(row) {
+        const sender = row.getAttribute('data-sender');
+        const date = row.getAttribute('data-date');
+        const message = row.getAttribute('data-message');
+        openModal(sender, date, message);
+    }
+
+    function openModal(sender, date, message) {
+        document.getElementById('sender-name').textContent = sender;
+        document.getElementById('message-date').textContent = date;
+        document.getElementById('full-message-content').textContent = message;
+        document.getElementById('messageModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('messageModal').style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        const modal = document.getElementById('messageModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    ScrollReveal().reveal(".notifications-container", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

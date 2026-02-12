@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet"/>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['.logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+                onChange: function(isDark) {
+                    if (isDark) {
+                        document.body.classList.add('dark-mode-active');
+                    } else {
+                        document.body.classList.remove('dark-mode-active');
+                    }
+                }
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            if (darkmode.isActivated()) {
+                document.body.classList.add('dark-mode-active');
+            }
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    <style>
+        .darkmode--activated span {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated a {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated li a {
+            color: #121212 !important;
+        }
+
+        .darkmode--activated label {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .input-field::placeholder {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .input-field {
+            color: #ffffff !important;
+        }
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+
+        .blur-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            filter: blur(0.5px);
+            z-index: -1;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="connexion-main">
+<div th:if="${message}">
+    <script th:inline="javascript">
+        Swal.fire({
+            title: [[${message}]],
+            icon: [[${message}]] === "warning",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#000000",
+            background: "#013c01",
+            color: "#ffffff"
+        });
+
+
+    </script>
+</div>
+
+<body class="connexion-main">
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/pageAccueil}" class="logo" style="filter: invert(0%) !important;">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien navMenu" id="nav-lien">
+        <li><a th:href="@{/pageAccueil}">Menu</a></li>
+        <li><a th:href="@{/connexion}">Connexion</a></li>
+        <li><a th:href="@{/produits}">Produits</a></li>
+        <li><a th:href="@{/notreHistoire}">À propos</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+
+    </div>
+</nav>
+
+<main>
+    <div class="wrapper">
+        <div class="blur-bg"></div>
+        <div class="login_boite">
+            <form th:action="@{/connexion/verification}" method="post" style="max-width: 700px; margin: 0 auto"
+                  th:object="${utilisateur}">
+                <input type="hidden" th:field="*{id}"/>
+                <div class="login-header">
+                    <span>Connexion</span>
+                </div>
+
+                <div class="input_boite">
+                    <input type="email" id="user" class="input-field" th:field="*{email}" required>
+                    <label for="user" class="label">Courriel</label>
+                    <i class="bx bx-user icon"></i>
+                </div>
+                <div class="input_boite">
+                    <input type="password" id="pass" class="input-field" th:field="*{motDePasse}" required>
+                    <label for="pass" class="label">Mot de passe</label>
+                    <i class="bx bx-lock-alt icon"></i>
+                </div>
+                <div class="input_login">
+                    <input type="submit" class="input-sumbit" value="Connexion">
+                </div>
+            </form>
+            <div class="register ">
+                <span>Pas de compte? <a th:href="@{/inscription/new}">Créer un</a> </span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

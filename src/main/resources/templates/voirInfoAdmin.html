@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portail Admin</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+  <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+  <style>
+    .darkmode--activated h1 {
+      color: #ffffff !important;
+    }
+    .darkmode-toggle{
+      z-index: 1000;
+    }
+    .darkmode--activated .info-container {
+      background-color: #1e1e1e !important;
+      color: #ffffff !important;
+      border-color: #333 !important;
+    }
+
+    .darkmode--activated span {
+      color: #ffffff !important;
+    }
+  </style>
+  <script>
+    function addDarkmodeWidget() {
+      const options = {
+        label: '🌓',
+        autoMatchOsTheme: true,
+        exclude: ['logo'],
+        buttonLight: '#5c5300',
+        buttonDark: '#121212',
+        saveInCookies: true,
+        left: 'unset',
+        bottom: 'unset',
+        top: 'unset',
+      };
+
+      const darkmode = new Darkmode(options);
+      const toggle = darkmode.showWidget();
+
+      setTimeout(() => {
+        toggle.style.position = 'relative';
+        toggle.style.left = 'auto';
+        toggle.style.right = 'auto';
+        toggle.style.bottom = 'auto';
+        toggle.style.top = 'auto';
+        toggle.style.zIndex = '9999';
+      }, 100);
+
+      document.getElementById('darkmode-toggle').appendChild(toggle);
+
+      setTimeout(() => {
+        document.querySelectorAll('img').forEach(img => {
+          img.style.filter = 'none';
+          img.style.mixBlendMode = 'normal';
+        });
+      }, 500);
+
+    }
+    window.addEventListener('load', addDarkmodeWidget);
+  </script>
+  <style>
+    .info-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    .info-title {
+      font-size: 1.75rem;
+      color: var(--primary-color);
+    }
+
+    .info-details {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-label {
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .info-value {
+      color: var(--text-light);
+    }
+
+    .back-btn {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-btn:hover {
+      background-color: var(--text-dark);
+    }
+  </style>
+</head>
+
+<body>
+<nav>
+  <div class="nav_header">
+    <div class="nav_logo">
+      <a th:href="@{/pageAccueil}" class="logo">greenpulse.export</a>
+    </div>
+    <div class="nav_menu_btn" id="menu-btn">
+      <i class="ri-menu-line"></i>
+    </div>
+  </div>
+  <ul class="nav_lien" id="nav-lien">
+    <li><a th:href="@{/compteAdmin}">Portail</a></li>
+    <li><a th:href="@{/gestionAcheteurProducteur}">Gestion de comptes</a></li>
+    <li><a th:href="@{/surveillancePrix}">Surveillance</a></li>
+  </ul>
+  <div class="nav_search" id="nav-search">
+    <div id="darkmode-toggle"></div>
+  </div>
+</nav>
+
+
+<main>
+  <div class="account-header">
+    <h1 class="account-title">Informations du compte</h1>
+    <div class="header-buttons">
+      <button class="back-btn">
+        <a th:href="@{/gestionAcheteurProducteur}">
+          <i class="ri-arrow-left-line"></i> Retour à l'arrière
+        </a>
+      </button>
+    </div>
+  </div>
+
+  <div class="info-container">
+    <div class="info-details">
+      <div class="info-row">
+        <span class="info-label">ID:</span>
+        <span class="info-value" th:text="${utilisateur.id}"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Nom:</span>
+        <span class="info-value" th:text="${utilisateur.nom}"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Prénom:</span>
+        <span class="info-value" th:text="${utilisateur.prenom}"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Email:</span>
+        <span class="info-value" th:text="${utilisateur.email}"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Téléphone:</span>
+        <span class="info-value" th:text="${utilisateur.telephone}"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Adresse:</span>
+        <span class="info-value" th:text="${utilisateur.adresse}"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Type:</span>
+        <span class="info-value" th:text="${utilisateur.typeUtilisateur}"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Statut:</span>
+        <span class="info-value" th:text="${utilisateur.status}"></span>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  ScrollReveal().reveal(".info-container", {
+    interval: 200,
+    distance: "20px",
+    origin: "bottom",
+    duration: 800
+  });
+
+  ScrollReveal().reveal(".dashboard", {
+    interval: 200,
+    distance: "20px",
+    origin: "bottom",
+    duration: 800,
+    delay: 200
+  });
+
+  window.addEventListener('load', () => {
+    document.body.classList.add('page-loaded');
+  });
+</script>
+
+</body>
+</html>

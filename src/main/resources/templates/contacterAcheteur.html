@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacter un Acheteur</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+        .darkmode--activated h2 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .contact-form-container {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated label {
+            color: #ffffff !important;
+        }
+
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+
+
+
+    <style>
+        /* Même style que l’original */
+        .contact-form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-title {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin: 2rem auto 0;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .back-btn a {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+
+</head>
+
+<body>
+<div th:if="${envoyer}">
+    <script th:inline="javascript">
+        Swal.fire({
+            title: [[${envoyer}]],
+            icon: [[${envoyer}]] === "success",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#000000",
+            background: "#013c01",
+            color: "#ffffff"
+        });
+    </script>
+</div>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/compteProducteur}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteProducteur}">Portail</a></li>
+        <li><a th:href="@{/infoProducteur}">Informations</a></li>
+        <li><a th:href="@{/produitsProducteur}">Produits</a></li>
+        <li><a th:href="@{/tendanceVente}">Tendance</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Contacter un Acheteur</h1>
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/compteProducteur}">
+                    <i class="ri-arrow-left-line"></i> Retour au portail
+                </a>
+            </button>
+        </div>
+    </div>
+
+    <div class="contact-form-container">
+        <h2 class="form-title">
+            <i class="ri-mail-send-line"></i> Envoyer un message à un acheteur
+        </h2>
+
+
+        <div th:if="${erreur}" style="color: red; font-weight: bold; margin-bottom: 1rem;">
+            <p th:text="${erreur}"></p>
+        </div>
+
+        <form th:action="@{/contact-acheteur}" th:object="${message}" method="post">
+            <div class="form-group">
+                <label for="emailEnvoyeur">Votre email :</label>
+                <input type="email" id="emailEnvoyeur" name="emailEnvoyeur"
+                       th:value="${session.email}" readonly required/>
+            </div>
+
+
+            <div class="form-group">
+                <label for="emailRecepteur">Choisissez un acheteur :</label>
+                <select id="emailRecepteur" th:field="*{emailRecepteur}" required>
+                    <option value="" disabled selected>-- Sélectionnez un acheteur --</option>
+                    <option th:each="ach : ${acheteurs}"
+                            th:value="${ach.email}"
+                            th:text="${ach.prenom + ' ' + ach.nom + ' (' + ach.email + ')'}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="contenuMessage">Votre message :</label>
+                <textarea id="contenuMessage" th:field="*{contenuMessage}" placeholder="Écrivez votre message ici..." required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Envoyer le message</button>
+        </form>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    ScrollReveal().reveal(".contact-form-container", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des commandes</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['.logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    <style>
+        .history-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .orders-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .orders-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .orders-table tr:nth-child(even) {
+            background-color: #c3c6b0;
+        }
+
+        .orders-table tr:hover {
+            background-color: #c3c6b0;
+        }
+
+        .no-transactions {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .back-btn a {
+            text-decoration: none;
+            color: white;
+        }
+
+
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+        .darkmode--activated h3 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+
+
+        .darkmode--activated h2 {
+            color: #ffffff !important;
+        }
+        .darkmode--activated .history-container {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+
+        .darkmode--activated p {
+            color: #ffffff !important;
+        }
+
+
+        .darkmode--activated td {
+            color: #ffffff !important;
+        }
+
+
+
+
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/compteAcheteur}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteAcheteur}">Portail</a></li>
+        <li><a th:href="@{/produitsAcheteur}">Produits</a></li>
+        <li><a th:href="@{/messageAcheteur}">Messages</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+<div th:if="${message}">
+    <script th:inline="javascript">
+        Swal.fire({
+            title: [[${message}]],
+            icon: [[${message}]] ===  "success",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#008000"
+        });
+    </script>
+</div>
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Historique des commandes</h1>
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/compteAcheteur}">
+                    <i class="ri-arrow-left-line"></i> Retour à l'arrière
+                </a>
+            </button>
+        </div>
+    </div>
+
+    <div class="history-container">
+        <h2 class="section-title">
+            <i class="ri-history-line"></i> Vos transactions passées
+        </h2>
+
+        <table class="orders-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Acheteur</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix Total</th>
+                <th>Statut</th>
+                <th>Date Paiement</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(listeTransactions)}">
+                <td colspan="9" class="no-transactions">Aucune transaction trouvée.</td>
+            </tr>
+            <tr th:each="transaction : ${listeTransactions}">
+                <td th:text="${transaction.id}"></td>
+                <td th:text="${transaction.acheteurId}"></td>
+                <td th:text="${transaction.nom + ' ' + transaction.prenom}"></td>
+                <td th:text="${transaction.email}"></td>
+                <td>
+                    <ul th:if="${transaction.produits != null and !transaction.produits.isEmpty()}">
+                        <li th:each="produit : ${transaction.produits}"
+                            th:text="${produit.nomGrain}">
+                        </li>
+                    </ul>
+                </td>
+                <td th:text="${transaction.quantiteAchetee} + ' kg'"></td>
+                <td th:text="${transaction.prixTotal} + ' $'"></td>
+                <td th:text="${transaction.statutCommande}"></td>
+                <td th:text="${#dates.format(transaction.datePaiement, 'dd/MM/yyyy')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    ScrollReveal().reveal(".history-container", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

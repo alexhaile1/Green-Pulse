@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contactez-nous</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h2 {
+            color: #ffffff !important;
+        }
+
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+        .darkmode--activated .contact-form-container {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated label {
+            color: #ffffff !important;
+        }
+
+    </style>
+    <style>
+        /* Même style que l’original */
+        .contact-form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-title {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            font-family: "Poppins", sans-serif;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin: 2rem auto 0;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .account-title{
+            margin-left: 700px;
+        }
+
+        .back-btn a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav_header, .nav_logo, .logo {
+            color: #28a745 !important;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['.logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    <script>
+    </script>
+</head>
+
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/pageAccueil}" class="logo" style="invert(0%) !important;">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/pageAccueil}">Menu</a></li>
+        <li><a th:href="@{/connexion}">Connexion</a></li>
+        <li><a th:href="@{/produits}">Produits</a></li>
+        <li><a th:href="@{/notreHistoire}">À propos</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Contactez-nous</h1>
+    </div>
+
+    <div class="contact-form-container">
+        <h2 class="form-title">
+            <i class="ri-mail-send-line"></i> Envoyez un message à notre équipe!
+        </h2>
+
+        <div th:if="${envoyer}" style="color: green; font-weight: bold; margin-bottom: 1rem;">
+            <p th:text="${envoyer}"></p>
+        </div>
+
+        <div th:if="${erreur}" style="color: red; font-weight: bold; margin-bottom: 1rem;">
+            <p th:text="${erreur}"></p>
+        </div>
+
+        <form action="#" id="contactForm">
+            <div class="form-group">
+                <label for="emailEnvoyeur">Votre email :</label>
+                <input type="email" id="emailEnvoyeur" name="emailEnvoyeur"
+                       placeholder="Entrez votre adresse courriel" required/>
+            </div>
+
+            <div class="form-group">
+                <label for="contenuMessage">Votre message :</label>
+                <textarea id="contenuMessage" name="contenuMessage" placeholder="Entrez un message" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Envoyez</button>
+        </form>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/emailService.js}"></script>
+<script>
+    ScrollReveal().reveal(".contact-form-container", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier un produit</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <style>
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+        .darkmode--activated .product-item {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated .product-name {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated label {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    <style>
+        .button-card a {
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .profile-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem;
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .product-item {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-item:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            flex: 1;
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .product-field {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-field label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .product-field input,
+        .product-field textarea,
+        .product-field select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            background-color: white;
+        }
+
+        .product-field textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .product-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .product-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            width: fit-content;
+        }
+
+        .product-meta {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .product-quantity {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .product-edit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .product-edit-btn:hover {
+            background-color: var(--text-dark);
+        }
+
+        .back-btn a{
+            text-decoration: none;
+            color: white;
+
+        }
+
+        .alert-modification p {
+            display : flex;
+            justify-content : center;
+        }
+    </style>
+</head>
+
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/compteProducteur}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteProducteur}">Portail</a></li>
+        <li><a th:href="@{/infoProducteur}">Informations</a></li>
+        <li><a th:href="@{/produitsProducteur}">Produits</a></li>
+        <li><a th:href="@{/tendanceVente}">Tendance</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Liste des produits</h1>
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/produitsProducteur}">
+                    <i class="ri-arrow-left-line"></i> Retour à l'arrière
+                </a>
+            </button>
+        </div>
+    </div>
+    <!-- Ajout de names dans les inputs afin de l'associer à l'objet ayant l'id du produit modifié -->
+    <div class="product-list">
+        <div th:each="produit : ${listeProduits}">
+            <form th:action="@{'/produits/edit/' + ${produit.id}}" method="post">
+                <div class="product-item">
+                    <div class="product-image">
+                        <img th:src="@{${'/' + produit.nomGrain + 'trp.png'}}">
+                    </div>
+
+                    <div class="product-info">
+                        <div class="product-field">
+                            <label for="product-name-1">Nom du produit</label>
+                            <input type="text" id="product-name-1" name="nomGrain" th:value="*{produit.nomGrain}">
+                        </div>
+
+                        <div class="product-field">
+                            <label for="product-category-1">Catégorie</label>
+                            <select id="product-category-1" name="typeGrain">
+                                <option value="Céréales" th:selected="*{produit.typeGrain == 'Céréales'}"> Céréales </option>
+                                <option value="Légumineuse" th:selected="*{produit.typeGrain == 'Légumineuse'}"> Légumineuse </option>
+                                <option value="Oléagineux" th:selected="*{produit.typeGrain == 'Oléagineux'}"> Oléagineux </option>
+                            </select>
+                        </div>
+
+                        <div class="product-field">
+                            <label for="product-description-1">Description</label>
+                            <textarea id="product-description-1" name="description" th:text="*{produit.description}"></textarea>
+                        </div>
+                    </div>
+                    <div class="product-meta">
+                        <div class="product-field">
+                            <label for="product-price-1">Prix ($)</label>
+                            <input type="number" step="0.01" id="product-price-1" name="prixVente" th:value="*{produit.prixVente}">
+                        </div>
+                        <div class="product-field">
+                            <label for="product-quantity-1">Quantité (kg)</label>
+                            <input type="number" id="product-quantity-1" name="quantiteDisponible" th:value="*{produit.quantiteDisponible}">
+                        </div>
+                    </div>
+                    <input type="hidden" id="producteur_email" name="producteurEmail" th:value="*{produit.producteurEmail}">
+                    <button type="submit" class="product-edit-btn" name="edit-product" th:value="${produit.id}">
+                        <i class="ri-edit-line"></i> Modifier ce produit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </form>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+
+<script>
+    ScrollReveal().reveal(".product-item", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    ScrollReveal().reveal(".produit-actions", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

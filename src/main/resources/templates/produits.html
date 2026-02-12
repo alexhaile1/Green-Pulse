@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Nos Produits</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet"/>
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <style>
+        .darkmode--activated .product_card {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated .nav_lien a:hover{
+            color: var(--primary-color);
+        }
+
+        .darkmode--activated h2 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h3 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .product_card p {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .popup_content h3 {
+            color: #121212 !important;
+        }
+
+        .darkmode--activated li {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated form {
+           border: solid #ffffff 15px;
+        }
+
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+
+</head>
+<body>
+<!-- Afficher alert pour un message d'un produit inexistant -->
+<div th:if="${message}">
+    <script th:inline="javascript">
+        Swal.fire({
+            title: [[${message}]],
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#000000",
+            background: "#013c01",
+            color: "#ffffff"
+        });
+    </script>
+</div>
+
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/pageAccueil}" class="logo" style="filter: invert(0%) !important;">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/pageAccueil}">Menu</a></li>
+        <li><a th:href="@{/connexion}">Connexion</a></li>
+        <li><a th:href="@{/produits}">Produits</a></li>
+        <li><a th:href="@{/notreHistoire}">À propos</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <form th:action="@{/rechercher/produits}" style="border: solid #ffffff 15px;">
+            <input type="text" name="keyword" placeholder="Rechercher un produit..." style="padding: 8px; width: 200px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+        </form>
+    </div>
+
+    <div id="darkmode-toggle"></div>
+</nav>
+
+<section class="products">
+    <div class="section_container">
+        <h2 style="filter: invert(0%) !important;">Nos Produits</h2>
+        <p>Découvrez notre sélection de produits agricoles de haute qualité.</p>
+        <div class="products_grid">
+            <div class="product_card" th:each="produit : ${listeProduits}">
+                <div class="image_container" style="background-color: #eed9c4;">
+                    <img th:src="@{${'/' + produit.nomGrain + 'trp.png'}}" alt="produit1">
+                </div>
+                <h3> [[${produit.nomGrain}]] </h3>
+                <p> [[${produit.description}]] </p>
+                <p> [[${produit.prixVente}]] $ </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="product_popup" class="popup">
+    <div class="popup_content">
+        <span class="close_popup">&times;</span>
+        <img id="popup_image" src="" alt="Product Image"/>
+        <h3 id="popup_title"></h3>
+        <p id="popup_description"></p>
+    </div>
+</div>
+
+<br>
+<div class="footer-basic" id="contact">
+    <footer>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a th:href="@{/sectionInformative}">Informations du marché</a></li>
+            <li class="list-inline-item"><a th:href="@{/termsConditions}">Termes et conditions</a>
+            <li class="list-inline-item"><a th:href="@{/contacterNous}">Contactez-nous</a></li>
+        </ul>
+        <p class="copyright">Copyright @2025; Collège de Rosemont; Mariyam , Leen , Yanis , Alex</p>
+    </footer>
+</div>
+
+<!--Partie Scripts-->
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    const animationConfig = {
+        distance: "50px",
+        origin: "bottom",
+        duration: 1000,
+        reset: false
+
+    };
+
+    ScrollReveal().reveal(".product_card", {
+        ...animationConfig,
+        interval: 300
+    });
+
+    const menuBtn = document.getElementById("menu-btn");
+    const navLiens = document.getElementById("nav-lien");
+    const menuBtnIcon = document.querySelector("i");
+
+    menuBtn.addEventListener("click", () => {
+        navLiens.classList.toggle("open");
+        const isOpen = navLiens.classList.contains("open");
+        menuBtnIcon.setAttribute("class", isOpen ? "ri-close-line" : "ri-menu-line");
+    });
+
+    navLiens.addEventListener("click", () => {
+        navLiens.classList.remove("open");
+        menuBtnIcon.setAttribute("class", "ri-menu-line");
+    });
+
+    const navSearch = document.getElementById("nav-search");
+
+    navSearch.addEventListener("click", () => {
+        navSearch.classList.toggle("open");
+    });
+
+    const swiper = new Swiper(".swiper", {
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false
+        }
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+
+    const productCards = document.querySelectorAll('.product_card');
+    const popup = document.getElementById('product_popup');
+    const popupImage = document.getElementById('popup_image');
+    const popupTitle = document.getElementById('popup_title');
+    const popupDescription = document.getElementById('popup_description');
+    const closePopup = document.querySelector('.close_popup');
+
+    productCards.forEach((card) => {
+        card.addEventListener('click', () => {
+            const image = card.querySelector('img').src;
+            const title = card.querySelector('h3').textContent;
+            const description = card.querySelector('p').textContent;
+
+            popupImage.src = image;
+            popupTitle.textContent = title;
+            popupDescription.textContent = description;
+
+            popup.style.display = 'flex';
+        });
+    });
+
+    closePopup.addEventListener('click', () => {
+        popup.style.display = 'none';
+    });
+
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            popup.style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>

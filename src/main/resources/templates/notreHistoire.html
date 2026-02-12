@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<html>
+    <head>
+        <title>Notre histoire</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
+        <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet" />
+        <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+        <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+        <style>
+            .darkmode--activated li {
+                color: #ffffff !important;
+            }
+
+            .darkmode--activated .apropos-content li {
+                color: #000000 !important;
+            }
+            .darkmode-toggle{
+                z-index: 1000;
+            }
+        </style>
+        <script>
+            function addDarkmodeWidget() {
+                const options = {
+                    label: '🌓',
+                    autoMatchOsTheme: true,
+                    exclude: ['.logo'],
+                    buttonLight: '#5c5300',
+                    buttonDark: '#121212',
+                    saveInCookies: true,
+                    left: 'unset',
+                    bottom: 'unset',
+                    top: 'unset',
+                    onChange: function(isDark) {
+                        if (isDark) {
+                            document.body.classList.add('dark-mode-active');
+                        } else {
+                            document.body.classList.remove('dark-mode-active');
+                        }
+                    }
+                };
+
+                const darkmode = new Darkmode(options);
+                const toggle = darkmode.showWidget();
+
+                setTimeout(() => {
+                    toggle.style.position = 'relative';
+                    toggle.style.left = 'auto';
+                    toggle.style.right = 'auto';
+                    toggle.style.bottom = 'auto';
+                    toggle.style.top = 'auto';
+                    toggle.style.zIndex = '9999';
+                }, 100);
+
+                document.getElementById('darkmode-toggle').appendChild(toggle);
+
+                if (darkmode.isActivated()) {
+                    document.body.classList.add('dark-mode-active');
+                }
+            }
+            window.addEventListener('load', addDarkmodeWidget);
+        </script>
+    </head>
+
+    <body>
+        <nav>
+            <div class="nav_header">
+                <div class="nav_logo">
+                    <a th:href="@{/pageAccueil}" class="logo" style="filter: invert(0%) !important;">greenpulse.export</a>
+                </div>
+                <div class="nav_menu_btn" id="menu-btn">
+                    <i class="ri-menu-line"></i>
+                </div>
+            </div>
+
+            <ul class="nav_lien" id="nav-lien">
+                <li><a th:href="@{/pageAccueil}">Menu</a></li>
+                <li><a th:href="@{/connexion}">Connexion</a></li>
+                <li><a th:href="@{/produits}">Produits</a></li>
+                <li><a th:href="@{/notreHistoire}">À propos</a></li>
+            </ul>
+
+            <div class="nav_search" id="nav-search">
+                <div id="darkmode-toggle"></div>
+            </div>
+        </nav>
+
+
+        <section class="aboutus">
+            <div class="apropos_container">
+                <div class="apropos-content">
+                    <h2>Notre histoire</h2>
+                    <p>Le Canada, premier exportateur mondial de légumineuses, concentre sa production dans l’Ouest du 
+                        pays. Toutefois, le marché est dominé par un oligopole de grandes multinationales, limitant les marges des producteurs 
+                        et augmentant les coûts pour les consommateurs. Fondée en 2018, Green Pulse ambitionne de transformer cette industrie en 
+                        réduisant la dépendance aux intermédiaires, offrant ainsi une alternative plus équitable et efficiente. 
+                    </p>
+                </div>
+                <div class="histoire_image">
+                    <img th:src="@{${'/gpexport-removebg.png'}}" >
+                </div>
+            </div>
+        </section>
+
+        <section class="aboutus">
+            <div class="apropos_container">
+                <div class="apropos-content">
+                    <h2>Notre mission</h2>
+                    <ul>
+                        <li>Connectant directement les producteurs canadiens aux acheteurs internationaux.</li>
+                        <li>Réduisant la dépendance aux grands intermédiaires, pour un commerce plus direct.</li>                  
+                        <li>Assurant un accès à des produits de qualité, avec des standards élevés et une approche durable.</li>                                
+                        <li>Transformer le marché canadien des légumineuses en créant un écosystème commercial équitable</li>                                
+                        <li>Favorisant la transparence et Optimisant la chaîne d'approvisionnement, pour une meilleure valorisation des produits.</li>
+                    </ul>
+                </div>
+                <div class="histoire_image">
+                    <img th:src="@{${'/agfo.jpg'}}" >
+                </div>
+            </div>
+        </section>
+        <br>
+
+        <div class="footer-basic" id="contact">
+            <footer>
+                <ul class="list-inline">
+                    <li class="list-inline-item"><a th:href="@{/sectionInformative}">Informations du marché</a></li>
+                    <li class="list-inline-item"><a th:href="@{/termsConditions}">Termes et conditions</a>
+                    <li class="list-inline-item"><a th:href="@{/contacterNous}">Contactez-nous</a></li>
+                </ul>
+                <p class="copyright">Copyright @2025; Collège de Rosemont; Mariyam , Leen , Yanis , Alex</p>
+            </footer>
+        </div>
+
+        <!--Partie Scripts-->
+        <script src="https://unpkg.com/scrollreveal"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+        <script th:src="@{/js/main.js}"></script>
+    </body>
+</html>

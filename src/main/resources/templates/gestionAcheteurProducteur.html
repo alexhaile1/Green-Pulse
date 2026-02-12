@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des comptes</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+    <style>
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .account-management-container {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+        .darkmode--activated .account-list {
+            background-color: #1e1e1e !important;
+            color: #1e1e1e !important;
+            border-color: #333 !important;
+        }
+
+
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h2 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h3 {
+            color: #121212 !important;
+        }
+
+        .darkmode--activated p {
+            color: #121212 !important;
+        }
+
+
+
+
+
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<!-- Afficher alert pour le message de la modification du status ou de la suppression selon le bouton sélectionné -->
+<body>
+<div th:if="${message}">
+    <script th:inline="javascript">
+        Swal.fire({
+            title: [[${message}]],
+            icon: [[${message}]] === "success",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#000000",
+            background: "#013c01",
+            color: "#ffffff"
+        });
+    </script>
+</div>
+
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/pageAccueil}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteAdmin}">Portail</a></li>
+        <li><a th:href="@{/gestionAcheteurProducteur}">Gestion de comptes</a></li>
+        <li><a th:href="@{/surveillancePrix}">Surveillance</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Gestion des comptes</h1>
+        <div class="header-buttons">
+            <button class="back-btn">
+                <a th:href="@{/compteAdmin}">
+                    <i class="ri-arrow-left-line"></i> Retour à l'arrière
+                </a>
+            </button>
+        </div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>Total Utilisateurs</h3>
+            <p>[[${listeProducteurs.size() + listeAcheteurs.size()}]]</p>
+        </div>
+        <div class="stat-card">
+            <h3>Producteurs</h3>
+            <p>[[${listeProducteurs.size()}]]</p>
+        </div>
+        <div class="stat-card">
+            <h3>Acheteurs</h3>
+            <p>[[${listeAcheteurs.size()}]]</p>
+        </div>
+        <div class="stat-card">
+            <h3>Actifs</h3>
+            <p th:text="${#lists.size(listeProducteurs.?[status == 'active']) + #lists.size(listeAcheteurs.?[status == 'active'])}">0</p>
+        </div>
+    </div>
+    <div class="account-management-container">
+        <div class="account-group">
+            <h2 class="group-title">Producteurs</h2>
+            <div class="account-list">
+                <div class="account-item" th:each="producteur : ${listeProducteurs}">
+                    <span class="account-name">[[${producteur.nom}]] [[${producteur.prenom}]]</span>
+                    <div class="action-buttons">
+
+                        <a th:href="@{'/utilisateurs/info/' + ${producteur.id}}">
+                            <button class="suspend-btn">
+                                <i class="ri-information-line"></i>
+                                <span>Voir informations</span>
+                            </button>
+                        </a>
+
+
+                        <a th:if="${producteur.status == 'suspendu'}"
+                           th:href="@{'/utilisateurs/' +${producteur.id} + '/active'}"
+                           th:producteurId="${producteur.id}">
+                            <button class="reactivate-btn">
+                                <i class="ri-play-mini-line"></i>
+                                <span>Réactiver</span>
+                            </button>
+                        </a>
+
+                        <a th:if="${producteur.status == 'active'}"
+                           th:href="@{'/utilisateurs/' +${producteur.id} + '/suspendu'}"
+                           th:producteurId="${producteur.id}">
+                            <button class="suspend-btn">
+                                <i class="ri-pause-line"></i>
+                                <span>Suspendre</span>
+                            </button>
+                        </a>
+
+                        <a th:href="@{'/utilisateurs/delete/' + ${producteur.id}}" th:acheteurId="${producteur.id}">
+                            <button class="delete-btn">
+                                <i class="ri-delete-bin-line"></i>
+                                <span>Supprimer</span>
+                            </button>
+                        </a>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="account-group">
+            <h2 class="group-title">Acheteurs</h2>
+            <div class="account-list">
+                <div class="account-item" th:each="acheteur : ${listeAcheteurs}">
+                    <span class="account-name">[[${acheteur.nom}]] [[${acheteur.prenom}]]</span>
+                    <div class="action-buttons">
+
+                        <a th:href="@{'/utilisateurs/info/' + ${acheteur.id}}">
+                            <button class="suspend-btn">
+                                <i class="ri-information-line"></i>
+                                <span>Voir informations</span>
+                            </button>
+                        </a>
+
+
+                        <a th:if="${acheteur.status == 'suspendu'}"
+                           th:href="@{'/utilisateurs/' +${acheteur.id} + '/active'}"
+                           th:producteurId="${acheteur.id}">
+                            <button class="reactivate-btn">
+                                <i class="ri-play-mini-line"></i>
+                                <span>Réactiver</span>
+                            </button>
+                        </a>
+
+                        <a th:if="${acheteur.status == 'active'}"
+                           th:href="@{'/utilisateurs/' +${acheteur.id} + '/suspendu'}"
+                           th:acheteurId="${acheteur.id}">
+                            <button class="suspend-btn">
+                                <i class="ri-pause-line"></i>
+                                <span>Suspendre</span>
+                            </button>
+                        </a>
+
+                        <a th:href="@{'/utilisateurs/delete/' + ${acheteur.id}}" th:acheteurId="${acheteur.id}">
+                            <button class="delete-btn">
+                                <i class="ri-delete-bin-line"></i>
+                                <span>Supprimer</span>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    ScrollReveal().reveal(".account-management-container", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

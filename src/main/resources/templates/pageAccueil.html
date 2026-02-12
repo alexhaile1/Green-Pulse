@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0">
+    <title>Green Pulse</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+    <style>
+        .darkmode--activated li {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h4 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated span {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated h2 {
+            color: #4ddf17 !important;
+        }
+
+        .darkmode--activated h3 {
+            color: #4ddf17 !important;
+        }
+
+        .darkmode--activated p {
+            color: #ffffff !important;
+        }
+
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+    </style>
+    <style>
+        .slider {
+            width: 100%;
+            height: var(--height);
+            overflow: hidden;
+            mask-image: linear-gradient(
+                    to right,
+                    transparent,
+                    #000 10% 90%,
+                    transparent
+            );
+        }
+
+        .slider .liste {
+            display: flex;
+            width: 100%;
+            min-width: calc(var(--width) * var(--quantity));
+            position: relative;
+        }
+
+        .slider .liste .images {
+            width: var(--width);
+            height: var(--height);
+            position: absolute;
+            left: 100%;
+            animation: autoRun 20s linear infinite;
+            transition: filter 0.5s;
+            animation-delay: calc((20s / var(--quantity)) * (var(--position) - 1) - 20s) !important;
+        }
+
+        .slider .liste .images img {
+            width: 100%;
+            border-radius: 20px;
+        }
+
+        @keyframes autoRun {
+            from {
+                left: 100%;
+            }
+            to {
+                left: calc(var(--width) * -1);
+            }
+        }
+
+        .slider:hover .images {
+            animation-play-state: paused !important;
+            filter: grayscale(1);
+        }
+
+        .slider .images:hover {
+            filter: grayscale(0);
+        }
+    </style>
+
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['.logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+                onChange: function(isDark) {
+                    if (isDark) {
+                        document.body.classList.add('dark-mode-active');
+                    } else {
+                        document.body.classList.remove('dark-mode-active');
+                    }
+                }
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            if (darkmode.isActivated()) {
+                document.body.classList.add('dark-mode-active');
+            }
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+</head>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const slider = document.querySelector('.listt');
+        const items = document.querySelectorAll('.list_item');
+
+        const clones = Array.from(items).map(item => {
+            const clone = item.cloneNode(true);
+            clone.setAttribute('aria-hidden', 'true');
+            return clone;
+        });
+        slider.append(...clones);
+
+        let animationId;
+        const speed = 1;
+        let position = 0;
+        const totalWidth = slider.scrollWidth / 2;
+
+        const animate = () => {
+            position -= speed;
+            if (position < -totalWidth)
+                position = 0;
+            slider.style.transform = `translateX(${position}px)`;
+            animationId = requestAnimationFrame(animate);
+        };
+
+        animationId = requestAnimationFrame(animate);
+
+        window.addEventListener('beforeunload', () => {
+            cancelAnimationFrame(animationId);
+        });
+    });
+</script>
+
+<body>
+<!-- Affichage des alertes -->
+<div th:if="${message}">
+    <script th:inline="javascript">
+        Swal.fire({
+            title: [[${message}]],
+            icon: [[${message}]] === "success",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#000000",
+            background: "#013c01",
+            color: "#ffffff"
+        });
+    </script>
+</div>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/pageAccueil}" class="logo" style="filter: invert(0%) !important;">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/pageAccueil}">Menu</a></li>
+        <li><a th:href="@{/connexion}">Connexion</a></li>
+        <li><a th:href="@{/produits}">Produits</a></li>
+        <li><a th:href="@{/notreHistoire}">À propos</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+
+<header class="section_cotainer header_container" id="home">
+    <div class="header_image">
+        <img th:src="@{${'/test1.jpeg'}}" alt="header">
+    </div>
+
+    <div class="header_content">
+        <div>
+            <h1>Green Pulse Export – Cultivons demain, Exportons aujourd'hui</h1>
+            <p>Découvrez comment Green Pulse Export révolutionne l'agriculture en offrant des produits d'exception,
+                alliant tradition et innovation pour des exportations durables et de qualité.</p>
+        </div>
+    </div>
+</header>
+
+<br> <br> <br>
+
+<section class="section_container produit_container">
+    <div class="produit_affichage">
+        <h2 class="section_header">Pourquoi choisir Green Pulse</h2>
+        <p>Découvrez notre sélection de produits agricoles de qualité</p>
+    </div>
+
+    <div class="produit_affichage">
+        <span><i class="ri-cash-line"></i></span>
+        <h4>La passion du terroir</h4>
+        <p>Nos produits incarnent le savoir-faire et la tradition de nos terres, offrant une qualité authentique pour
+            sublimer chacune de vos préparations.</p>
+    </div>
+
+    <div class="produit_affichage">
+        <span><i class="ri-calendar-schedule-line"></i></span>
+        <h4>Livraison rapide et fiable</h4>
+        <p>Nous assurons des délais d'expédition courts et un suivi personnalisé pour que vos produits arrivent frais et
+            à temps, où que vous soyez.</p>
+    </div>
+
+    <div class="produit_affichage">
+        <span><i class="ri-money-dollar-circle-line"></i></span>
+        <h4>Des offres imbattables</h4>
+        <p>Profitez de tarifs attractifs sur une gamme de produits soigneusement sélectionnés pour leur qualité et leur
+            fraîcheur, afin de satisfaire toutes vos exigences.</p>
+    </div>
+</section>
+
+<br>
+<section class="section_container about_cotainer" id="about">
+    <div class="about_content">
+        <div class="about_image">
+            <img th:src="@{${'/vertical-bomboclaat.jpg'}}" alt="header" height="900px" width="850px">
+        </div>
+
+        <div class="about_grid" style="filter: invert(0%) !important;">
+            <div class="about_gp">
+                <h3>1.</h3>
+                <h4>Engagement Durable</h4>
+                <p>Nous adoptons des pratiques agricoles respectueuses de l’environnement, favorisant la biodiversité et
+                    la conservation des ressources naturelles.</p>
+            </div>
+
+            <div class="about_gp">
+                <h3>2.</h3>
+                <h4>Innovation et Savoir-Faire</h4>
+                <p>Nous allions tradition et technologies modernes pour optimiser la qualité de nos cultures tout en
+                    garantissant l’authenticité de nos produits.</p>
+            </div>
+
+            <div class="about_gp">
+                <h3>3.</h3>
+                <h4>Qualité Supérieure</h4>
+                <p>Chaque produit est rigoureusement sélectionné pour offrir une excellence incomparable, gage de
+                    confiance et de satisfaction pour nos partenaires.</p>
+            </div>
+
+            <div class="about_gp">
+                <h3>4.</h3>
+                <h4>Exportation Internationale</h4>
+                <p>Nous connectons nos richesses locales aux marchés mondiaux, assurant des délais de livraison rapides
+                    et un suivi personnalisé.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<h2 section="section_header" style="filter: invert(0%) !important;">Notre grande variété de produits</h2> <br>
+
+<div class="slider" style="
+            --width: 500px;
+            --height: 500px;
+            --quantity: 8;
+        ">
+    <div class="liste">
+        <a th:href="@{/produits}">
+            <div class="images" style="--position: 1"><img th:src="@{${'/poischiches.jpg'}}" alt=""></div>
+        </a>
+        <a th:href="@{/produits}">
+            <div class="images" style="--position: 2"><img th:src="@{${'/bleavoine.jpg'}}" alt=""></div>
+        </a>
+        <a th:href="@{/produits}">
+            <div class="images" style="--position: 3"><img th:src="@{${'/beans.jpg'}}" alt=""></div>
+        </a>
+        <a th:href="@{/produits}">
+            <div class="images" style="--position: 4"><img th:src="@{${'/pistache.jpg'}}" alt=""></div>
+        </a>
+        <a th:href="@{/produits}">
+            <div class="images" style="--position: 5"><img th:src="@{${'/amande.jpg'}}" alt=""></div>
+        </a>
+        <a th:href="@{/produits}">
+            <div class="images" style="--position: 6"><img th:src="@{${'/riz.jpg'}}" alt=""></div>
+        </a>
+        <a th:href="@{/produits}">
+            <div class="images" style="--position: 7"><img th:src="@{${'/lentille.jpg'}}" alt=""></div>
+        </a>
+        <a th:href="@{/produits}">
+            <div class="images" style="--position: 8"><img th:src="@{${'/macadamia.jpg'}}" alt=""></div>
+        </a>
+
+    </div>
+</div>
+<br>
+<div class="footer-basic" id="contact">
+    <footer>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a th:href="@{/sectionInformative}">Informations du marché</a></li>
+            <li class="list-inline-item"><a th:href="@{/termsConditions}">Termes et conditions</a>
+            <li class="list-inline-item"><a th:href="@{/contacterNous}">Contactez-nous</a></li>
+        </ul>
+        <p class="copyright">Copyright @2025; Collège de Rosemont; Mariyam , Leen , Yanis , Alex</p>
+    </footer>
+</div>
+
+<!--Partie Scripts-->
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

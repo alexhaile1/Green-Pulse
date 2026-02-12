@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail Acheteur</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <style>
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+        .darkmode--activated .button-card {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .darkmode--activated h2 {
+            color: #121212 !important;
+        }
+
+        .darkmode--activated h3 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated p {
+            color: #ffffff !important;
+        }
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+    </style>
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = 'none';
+                    img.style.mixBlendMode = 'normal';
+                });
+            }, 500);
+
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+</head>
+
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/compteAcheteur}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteAcheteur}">Portail</a></li>
+        <li><a th:href="@{/produitsAcheteur}">Produit</a></li>
+        <li><a th:href="@{/messageAcheteur}">Messages</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<main>
+    <div class="account-header">
+        <!--Afficher le nom d'utilisateur connecté-->
+        <h1 class="account-title"> Bienvenue <span th:if="${session}!=null">
+                [[${session['prenom']}]]   [[${session['nom']}]] </span> !
+        </h1>
+        <a th:href="@{/deconnexion}">
+            <button class="logout-btn">Se déconnecter</button>
+        </a>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="account-buttons">
+            <div class="button-card">
+                <a th:href="@{/infoAcheteur}">
+                    <img th:src="@{${'/utilisateur.png'}}" alt="Option 0">
+                    <h3>Vos informations</h3>
+                    <p style="font-size: 14px;">Cliquer pour voir et modifier vos informations</p></a>
+            </div>
+            <div class="button-card">
+                <a th:href="@{/produitsAcheteur}">
+                    <img th:src="@{${'/liste.png'}}" alt="Option 2">
+                    <h3>Voir les produits</h3>
+                    <p>Ajouter des produits au panier et passer une commande</p>
+                </a>
+            </div>
+            <div class="button-card">
+                <a th:href="@{/historiqueAcheteur}">
+                    <img th:src="@{${'/fichiers-temporaires.png'}}" alt="Option 3">
+                    <h3>Historique de commandes</h3>
+                </a>
+                <p>Retrouvez l’ensemble de vos achats précédents avec les détails de chaque transaction .</p>
+            </div>
+            <div class="button-card">
+                <a th:href="@{/transactionAcheteur}">
+                    <img th:src="@{${'/suivi-de-commande.png'}}" alt="Option 2">
+                    <h3>Suivis de commandes</h3>
+                </a>
+                <p> Visualisez l’état de vos commandes en cours et des confirmations aux livraisons.</p>
+            </div>
+            <div class="button-card">
+                <a th:href="@{/contacterAcheteur}">
+                    <img th:src="@{${'/acquisition.png'}}" alt="Option 2">
+                    <h3>Demande d'achats</h3>
+                    <p>Envoyez une demande d'achat directement à un producteur et négociez les conditions.</p>
+                </a>
+            </div>
+            <div class="button-card">
+                <a th:href="@{/messageAcheteur}">
+                    <img th:src="@{${'/message.png'}}" alt="Option 6">
+                    <h3>Voir les messages</h3>
+                    <p>L'option permet de voir les messages et demandes envoyés aux producteurs.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    ScrollReveal().reveal(".content-wrapper", {
+        interval: 200,
+        distance: "20px",
+        origin: "bottom",
+        duration: 800
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('page-loaded');
+    });
+</script>
+</body>
+</html>

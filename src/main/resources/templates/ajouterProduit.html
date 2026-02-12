@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un produit</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesComptes.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+    <script th:src="@{/js/validationAjoutProduit.js}"> </script>
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['.logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+                onChange: function(isDark) {
+                    if (isDark) {
+                        document.body.classList.add('dark-mode-active');
+                    } else {
+                        document.body.classList.remove('dark-mode-active');
+                    }
+                }
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            if (darkmode.isActivated()) {
+                document.body.classList.add('dark-mode-active');
+            }
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    <style>
+        .darkmode--activated h1 {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .product-form {
+            background-color: #f1e6e6 !important;
+        }
+
+        .darkmode--activated label {
+            color: #ffffff !important;
+        }
+        .darkmode--activated .logo {
+            color: #ffffff !important;
+        }
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/compteProducteur}" class="logo">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/compteProducteur}">Portail</a></li>
+        <li><a th:href="@{/infoProducteur}">Informations</a></li>
+        <li><a th:href="@{/produitsProducteur}">Produits</a></li>
+        <li><a th:href="@{/tendanceVente}">Tendance</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<!-- Produit doublons -->
+<div th:if="${erreur}">
+    <script th:inline="javascript">
+        Swal.fire({
+            title: [[${erreur}]],
+            icon: [[${erreur}]] === "success",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#000000",
+            background: "#013c01",
+            color: "#ffffff"
+        });
+    </script>
+</div>
+
+
+<main>
+    <div class="account-header">
+        <h1 class="account-title">Ajouter un nouveau produit</h1>
+        <button class="back-btn">
+            <a th:href="@{/compteProducteur}">
+                <i class="ri-arrow-left-line"></i> Retour à l'arrière</a>
+        </button>
+    </div>
+
+    <div class="product-form-container">
+        <form id="ajoutProduitForm" class="product-form" th:action="@{/produits/save}" method="POST" enctype="multipart/form-data" th:object="${produit}">
+            <div class="form-row">
+                <div class="form-group" style="animation-delay: 0.2s">
+                    <label for="producteurEmail">Courriel</label>
+                    <input type="email" id="producteurEmail" name="producteurEmail" th:value="${session.email}" readonly required/>
+                </div>
+
+                <div class="form-group" style="animation-delay: 0.2s">
+                <label for="productName">Nom du produit</label>
+                    <input type="text" id="productName" class="form-control" placeholder="Ex: Blé" th:field="*{nomGrain}">
+                </div>
+        </div>
+
+            <div class="form-row">
+                <div class="form-group" style="animation-delay: 0.3s">
+                    <label for="productType">Type du produit</label>
+                    <select id="productType" class="form-control" th:field="*{typeGrain}">
+                        <option value="">Sélectionnez un type</option>
+                        <option value="Céréales">Céréales</option>
+                        <option value="Légumineuses">Légumineuses</option>
+                        <option value="Fruits secs">Fruits secs</option>
+                        <option value="Légumes">Légumes</option>
+                        <option value="Fruits">Fruits</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="animation-delay: 0.4s">
+                    <label for="productPrice">Prix</label>
+                    <input type="number" id="productPrice" class="form-control" step="0.01" min="0" placeholder="20.42" th:field="*{prixVente}">
+                </div>
+            </div>
+
+            <div class="form-group" style="animation-delay: 0.5s">
+                <label for="productDescription">Description</label>
+                <textarea id="productDescription" class="form-control" placeholder="Décrivez le produit en quelques mots..."  th:field="*{description}"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group" style="animation-delay: 0.6s">
+                    <label for="productQuantity">Quantité disponible</label>
+                    <input type="number" id="productQuantity" class="form-control" min="0" placeholder="Ex: 5" th:field="*{quantiteDisponible}">
+                </div>
+
+                <div class="form-group" style="animation-delay: 0.7s">
+                    <label for="productDate">Date de publication</label>
+                    <input type="date" id="productDate" class="form-control" th:field="*{datePublication}">
+                </div>
+            </div>
+
+            <div class="form-group" style="animation-delay: 0.8s">
+                <label for="productImage">Image du produit</label>
+                <input type="file" id="productImage" name="productImage" class="form-control" accept="image/*">
+
+                <div class="image-preview-container">
+                    <div class="image-preview" id="image-preview">
+                        <div class="image-preview-placeholder">
+                            <i class="ri-image-line" style="font-size: 2rem;"></i>
+                            <p>Aperçu de l'image</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="text-align: center; animation-delay: 0.9s">
+                <button type="submit" class="btn-submit">
+                    <i class="ri-save-line" style="margin-right: 8px;"></i> Ajouter le produit
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!--Partie Scripts-->
+<script>
+    document.getElementById('productImage').addEventListener('change', function (e) {
+        const preview = document.getElementById('image-preview');
+        const file = e.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Aperçu du produit">`;
+            }
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('productDate').valueAsDate = new Date();
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.body.classList.add('page-loaded');
+
+        const formGroups = document.querySelectorAll('.form-group');
+        formGroups.forEach((group, index) => {
+            group.style.animationDelay = `${0.1 + (index * 0.1)}s`;
+        });
+    });
+
+    const menuBtn = document.getElementById('menu-btn');
+    const navLiens = document.getElementById('nav-lien');
+    const menuBtnIcon = document.querySelector("#menu-btn i");
+
+    menuBtn.addEventListener('click', () => {
+        navLiens.classList.toggle('open');
+        const isOpen = navLiens.classList.contains('open');
+        menuBtnIcon.setAttribute('class', isOpen ? "ri-close-line" : "ri-menu-line");
+    });
+
+    navLiens.addEventListener('click', () => {
+        navLiens.classList.remove('open');
+        menuBtnIcon.setAttribute('class', "ri-menu-line");
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'inscription</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
+    <link rel="icon" type="image/png" th:href="@{/gpexport-removebg.png}"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function addDarkmodeWidget() {
+            const options = {
+                label: '🌓',
+                autoMatchOsTheme: true,
+                exclude: ['.logo'],
+                buttonLight: '#5c5300',
+                buttonDark: '#121212',
+                saveInCookies: true,
+                left: 'unset',
+                bottom: 'unset',
+                top: 'unset',
+                onChange: function(isDark) {
+                    if (isDark) {
+                        document.body.classList.add('dark-mode-active');
+                    } else {
+                        document.body.classList.remove('dark-mode-active');
+                    }
+                }
+            };
+
+            const darkmode = new Darkmode(options);
+            const toggle = darkmode.showWidget();
+
+            setTimeout(() => {
+                toggle.style.position = 'relative';
+                toggle.style.left = 'auto';
+                toggle.style.right = 'auto';
+                toggle.style.bottom = 'auto';
+                toggle.style.top = 'auto';
+                toggle.style.zIndex = '9999';
+            }, 100);
+
+            document.getElementById('darkmode-toggle').appendChild(toggle);
+
+            if (darkmode.isActivated()) {
+                document.body.classList.add('dark-mode-active');
+            }
+        }
+        window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    <style>
+        .darkmode--activated span {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated a {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated li a {
+            color: #121212 !important;
+        }
+
+        .darkmode--activated placeholder {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated th {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .input-field::placeholder {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .input-field {
+            color: #ffffff !important;
+        }
+
+        .darkmode--activated .input-field:focus::placeholder {
+            color: transparent !important;
+        }
+
+        .darkmode--activated option {
+            color: #121212 !important;
+        }
+
+        .darkmode-toggle{
+            z-index: 1000;
+        }
+        .blur-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            filter: blur(0.5px);
+            z-index: -1;
+        }
+
+
+        em.error {
+            color: darkred;
+        }
+    </style>
+</head>
+
+<body class="connexion-main">
+
+<nav>
+    <div class="nav_header">
+        <div class="nav_logo">
+            <a th:href="@{/pageAccueil}" class="logo" style="filter: invert(0%) !important;">greenpulse.export</a>
+        </div>
+        <div class="nav_menu_btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
+    </div>
+    <ul class="nav_lien" id="nav-lien">
+        <li><a th:href="@{/pageAccueil}">Menu</a></li>
+        <li><a th:href="@{/connexion}">Connexion</a></li>
+        <li><a th:href="@{/produits}">Produits</a></li>
+        <li><a th:href="@{/notreHistoire}">À propos</a></li>
+    </ul>
+    <div class="nav_search" id="nav-search">
+        <div id="darkmode-toggle"></div>
+    </div>
+</nav>
+
+<!--courriel doublons-->
+<div th:if="${erreur}">
+    <script th:inline="javascript">
+        Swal.fire({
+            title: [[${erreur}]],
+            icon: [[${erreur}]] === "success",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#000000",
+            background: "#013c01",
+            color: "#ffffff"
+        });
+    </script>
+</div>
+
+<main>
+    <div class="wrapper">
+        <div class="blur-bg">  </div>
+
+        <div class="login_boite">
+            <div class="login-header">
+                <span>Inscription</span>
+            </div>
+            <form id="registrationForm" th:action="@{/inscription/save}" method="post" th:object="${utilisateur}">
+
+                <div class="input_boite">
+                    <input type="text" id="prenom" class="input-field" th:field="*{prenom}">
+                    <label for="prenom" class="label">Prénom</label>
+                    <i class="bx bx-user icon"></i>
+                </div>
+                <div class="input_boite">
+                    <input type="text" id="nom" class="input-field" th:field="*{nom}">
+                    <label for="nom" class="label">Nom</label>
+                    <i class="bx bx-user icon"></i>
+                </div>
+                <div class="input_boite">
+                    <input type="tel" id="telephone" class="input-field" th:field="*{telephone}">
+                    <label for="telephone" class="label">Numéro de téléphone</label>
+                    <i class="bx bx-phone icon"></i>
+                </div>
+                <div class="input_boite">
+                    <input type="email" id="courriel" class="input-field" th:field="*{email}">
+                    <label for="courriel" class="label">Courriel</label>
+                    <i class="bx bx-envelope icon"></i>
+                </div>
+                <div class="input_boite">
+                    <input type="password" id="motdepasse" class="input-field" th:field="*{motDePasse}">
+                    <label for="motdepasse" class="label">Mot de passe</label>
+                    <i class="bx bx-lock-alt icon"></i>
+                </div>
+                <div class="input_boite">
+                    <input type="password" id="confirmation" class="input-field">
+                    <label for="confirmation" class="label">Confirmation du mot de passe</label>
+                    <i class="bx bx-lock-alt icon"></i>
+                </div>
+                <div class="input_boite">
+                    <input type="text" id="pays" class="input-field" th:field="*{pays}">
+                    <label for="pays" class="label">Pays</label>
+                    <i class="bx bx-globe icon"></i>
+                </div>
+                <div class="input_boite">
+                    <input type="text" id="adresse" class="input-field" th:field="*{adresse}">
+                    <label for="adresse" class="label">Adresse</label>
+                    <i class="bx bx-home icon"></i>
+                </div>
+                <div class="input_boite">
+                    <select id="role" class="input-field" th:field="*{typeUtilisateur}"
+                            onchange="toggleRoleFields()"
+                            required>
+                        <option value="">Choisissez votre rôle</option>
+                        <option value="Producteur">Producteur</option>
+                        <option value="Acheteur">Acheteur</option>
+                    </select>
+                    <label for="role" class="label"></label>
+                    <i class="bx bx-user-pin icon"></i>
+                </div>
+                <input type="hidden" th:field="*{status}"/>
+
+                <!-- pour les choix d'acheteurs et producteurs -->
+                <div id="producteurFields" style="display: none;">
+                    <div class="input_boite">
+                        <input type="text" id="type_culture" class="input-field" th:field="*{typeCulture}"
+                               placeholder="Agriculture, Légumineuses, etc.">
+                        <label for="type_culture" class="label">Type de culture</label>
+                        <i class="bx bx-leaf icon"></i>
+                    </div>
+                    <div class="input_boite">
+                        <input type="number" id="superficie" step="0.01" class="input-field"
+                               th:field="*{superficieExploitée}"
+                               placeholder="262.90">
+                        <label for="superficie" class="label">Superficie exploitée</label>
+                        <i class="bx bx-area icon"></i>
+                    </div>
+                    <div class="se-souvenir">
+                        <div class="se-souvenir">
+                            <input type="checkbox" class="form-check-input" name="certificationBio"
+                                   th:field="*{certificationBio}" id="remember" value="optionl">
+                            <label for="remember"> Avez-vous une certification biologique? (Cochez si oui) </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="acheteurFields" style="display: none;">
+                    <div class="input_boite">
+                        <input type="text" id="type_entreprise" class="input-field" th:field="*{typeEntreprise}"
+                               placeholder="Petite entreprise, moyenne, etc.">
+                        <label for="type_entreprise" class="label">Type d'entreprise</label>
+                        <i class="bx bx-building icon"></i>
+                    </div>
+                    <div class="input_boite">
+                        <input type="number" step="0.01" id="volume_achat_mensuel" class="input-field"
+                               th:field="*{volumeAchatMensuel}"
+                               placeholder="698754.00, 659.00, etc">
+                        <label for="volume_achat_mensuel" class="label">Volume achat mensuel</label>
+                        <i class="bx bx-building icon"></i>
+                    </div>
+                    <div class="input_boite">
+                        <input type="text" id="raison_sociale" class="input-field" th:field="*{raisonSociale}"
+                               placeholder="LeguminesLopoe, Vegetable.co, etc">
+                        <label for="raison_sociale" class="label">Raison Sociale</label>
+                        <i class="bx bx-building icon"></i>
+                    </div>
+                </div>
+                <div class="input_login">
+                    <input type="submit" class="input-sumbit" value="Inscription">
+                </div>
+            </form>
+            <div class="register">
+                <span>Déjà un compte? <a th:href="@{/connexion}">Connecte toi</a></span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+<script th:src="@{/js/validationInscription.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
